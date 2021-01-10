@@ -29,19 +29,19 @@ const User_1 = require("../entities/User");
 const argon2_1 = __importDefault(require("argon2"));
 const type_graphql_1 = require("type-graphql");
 const constants_1 = require("../constants");
-let UsernamePasswordInput = class UsernamePasswordInput {
+let EmailPasswordInput = class EmailPasswordInput {
 };
 __decorate([
     type_graphql_1.Field(),
     __metadata("design:type", String)
-], UsernamePasswordInput.prototype, "username", void 0);
+], EmailPasswordInput.prototype, "email", void 0);
 __decorate([
     type_graphql_1.Field(),
     __metadata("design:type", String)
-], UsernamePasswordInput.prototype, "password", void 0);
-UsernamePasswordInput = __decorate([
+], EmailPasswordInput.prototype, "password", void 0);
+EmailPasswordInput = __decorate([
     type_graphql_1.InputType()
-], UsernamePasswordInput);
+], EmailPasswordInput);
 let FieldError = class FieldError {
 };
 __decorate([
@@ -81,11 +81,11 @@ let UserResolver = class UserResolver {
     }
     register(credentials, { em, req }) {
         return __awaiter(this, void 0, void 0, function* () {
-            if (credentials.username.length <= 2) {
+            if (credentials.email.length <= 2) {
                 return {
                     errors: [
                         {
-                            field: "username",
+                            field: "email",
                             message: "length must be grater than 2",
                         },
                     ],
@@ -103,7 +103,7 @@ let UserResolver = class UserResolver {
             }
             const hashedPassword = yield argon2_1.default.hash(credentials.password);
             const user = em.create(User_1.User, {
-                username: credentials.username,
+                email: credentials.email,
                 password: hashedPassword,
             });
             try {
@@ -112,7 +112,7 @@ let UserResolver = class UserResolver {
             catch (err) {
                 if (err.code === "23505") {
                     return {
-                        errors: [{ field: "username", message: "username already taken" }],
+                        errors: [{ field: "email", message: "email already taken" }],
                     };
                 }
             }
@@ -122,12 +122,12 @@ let UserResolver = class UserResolver {
     }
     login(credentials, { em, req }) {
         return __awaiter(this, void 0, void 0, function* () {
-            const user = yield em.findOne(User_1.User, { username: credentials.username });
+            const user = yield em.findOne(User_1.User, { email: credentials.email });
             if (!user) {
                 return {
                     errors: [
                         {
-                            field: "username",
+                            field: "email",
                             message: "That user doesn't exist",
                         },
                     ],
@@ -172,7 +172,7 @@ __decorate([
     __param(0, type_graphql_1.Arg("credentials")),
     __param(1, type_graphql_1.Ctx()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [UsernamePasswordInput, Object]),
+    __metadata("design:paramtypes", [EmailPasswordInput, Object]),
     __metadata("design:returntype", Promise)
 ], UserResolver.prototype, "register", null);
 __decorate([
@@ -180,7 +180,7 @@ __decorate([
     __param(0, type_graphql_1.Arg("credentials")),
     __param(1, type_graphql_1.Ctx()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [UsernamePasswordInput, Object]),
+    __metadata("design:paramtypes", [EmailPasswordInput, Object]),
     __metadata("design:returntype", Promise)
 ], UserResolver.prototype, "login", null);
 __decorate([

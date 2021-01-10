@@ -15,9 +15,9 @@ import { COOKIE_NAME } from "../constants";
 
 // For Arguments
 @InputType()
-class UsernamePasswordInput {
+class EmailPasswordInput {
   @Field()
-  username: string;
+  email: string;
   @Field()
   password: string;
 }
@@ -55,14 +55,14 @@ export class UserResolver {
 
   @Mutation(() => UserResponse)
   async register(
-    @Arg("credentials") credentials: UsernamePasswordInput,
+    @Arg("credentials") credentials: EmailPasswordInput,
     @Ctx() { em, req }: MyContext
   ): Promise<UserResponse> {
-    if (credentials.username.length <= 2) {
+    if (credentials.email.length <= 2) {
       return {
         errors: [
           {
-            field: "username",
+            field: "email",
             message: "length must be grater than 2",
           },
         ],
@@ -83,7 +83,7 @@ export class UserResolver {
     const hashedPassword = await argon2.hash(credentials.password);
 
     const user = em.create(User, {
-      username: credentials.username,
+      email: credentials.email,
       password: hashedPassword,
     });
 
@@ -92,7 +92,7 @@ export class UserResolver {
     } catch (err) {
       if (err.code === "23505") {
         return {
-          errors: [{ field: "username", message: "username already taken" }],
+          errors: [{ field: "email", message: "email already taken" }],
         };
       }
     }
@@ -107,15 +107,15 @@ export class UserResolver {
 
   @Mutation(() => UserResponse)
   async login(
-    @Arg("credentials") credentials: UsernamePasswordInput,
+    @Arg("credentials") credentials: EmailPasswordInput,
     @Ctx() { em, req }: MyContext
   ): Promise<UserResponse> {
-    const user = await em.findOne(User, { username: credentials.username });
+    const user = await em.findOne(User, { email: credentials.email });
     if (!user) {
       return {
         errors: [
           {
-            field: "username",
+            field: "email",
             message: "That user doesn't exist",
           },
         ],
