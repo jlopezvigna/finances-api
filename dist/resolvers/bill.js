@@ -22,42 +22,39 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.BillResolver = void 0;
-const Bill_1 = require("../entities/Bill");
 const type_graphql_1 = require("type-graphql");
+const Bill_1 = require("../entities/Bill");
 let BillResolver = class BillResolver {
-    bills({ em }) {
-        return em.find(Bill_1.Bill, {});
+    bills() {
+        return Bill_1.Bill.find();
     }
-    bill(id, { em }) {
-        return em.findOne(Bill_1.Bill, { id });
+    bill(id) {
+        return Bill_1.Bill.findOne(id);
     }
-    createBill(title, amount, { em }) {
+    createBill(title, amount) {
         return __awaiter(this, void 0, void 0, function* () {
-            const bill = em.create(Bill_1.Bill, { title, amount });
-            yield em.persistAndFlush(bill);
-            return bill;
+            return Bill_1.Bill.create({ title, amount }).save();
         });
     }
-    updateBill(id, title, amount, { em }) {
+    updateBill(id, title, amount) {
         return __awaiter(this, void 0, void 0, function* () {
-            const bill = yield em.findOne(Bill_1.Bill, { id });
+            const bill = Bill_1.Bill.findOne(id);
             if (!bill) {
-                return null;
+                return undefined;
             }
             if (typeof title !== undefined) {
-                bill.title = title;
+                yield Bill_1.Bill.update({ id }, { title });
             }
             if (typeof amount !== undefined) {
-                bill.amount = amount;
+                yield Bill_1.Bill.update({ id }, { amount });
             }
-            yield em.persistAndFlush(bill);
             return bill;
         });
     }
-    deleteBill(id, { em }) {
+    deleteBill(id) {
         return __awaiter(this, void 0, void 0, function* () {
             try {
-                yield em.nativeDelete(Bill_1.Bill, { id });
+                yield Bill_1.Bill.delete(id);
             }
             catch (_a) {
                 return false;
@@ -68,25 +65,23 @@ let BillResolver = class BillResolver {
 };
 __decorate([
     type_graphql_1.Query(() => [Bill_1.Bill]),
-    __param(0, type_graphql_1.Ctx()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [Object]),
+    __metadata("design:paramtypes", []),
     __metadata("design:returntype", Promise)
 ], BillResolver.prototype, "bills", null);
 __decorate([
     type_graphql_1.Query(() => Bill_1.Bill, { nullable: true }),
-    __param(0, type_graphql_1.Arg("id")), __param(1, type_graphql_1.Ctx()),
+    __param(0, type_graphql_1.Arg("id")),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [Number, Object]),
+    __metadata("design:paramtypes", [Number]),
     __metadata("design:returntype", Promise)
 ], BillResolver.prototype, "bill", null);
 __decorate([
     type_graphql_1.Mutation(() => Bill_1.Bill),
     __param(0, type_graphql_1.Arg("title")),
     __param(1, type_graphql_1.Arg("amount")),
-    __param(2, type_graphql_1.Ctx()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [String, Number, Object]),
+    __metadata("design:paramtypes", [String, Number]),
     __metadata("design:returntype", Promise)
 ], BillResolver.prototype, "createBill", null);
 __decorate([
@@ -94,17 +89,15 @@ __decorate([
     __param(0, type_graphql_1.Arg("id")),
     __param(1, type_graphql_1.Arg("title")),
     __param(2, type_graphql_1.Arg("amount")),
-    __param(3, type_graphql_1.Ctx()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [Number, String, Number, Object]),
+    __metadata("design:paramtypes", [Number, String, Number]),
     __metadata("design:returntype", Promise)
 ], BillResolver.prototype, "updateBill", null);
 __decorate([
     type_graphql_1.Mutation(() => Boolean),
     __param(0, type_graphql_1.Arg("id")),
-    __param(1, type_graphql_1.Ctx()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [Number, Object]),
+    __metadata("design:paramtypes", [Number]),
     __metadata("design:returntype", Promise)
 ], BillResolver.prototype, "deleteBill", null);
 BillResolver = __decorate([

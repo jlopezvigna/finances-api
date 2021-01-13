@@ -45,6 +45,7 @@
     "nodemailer": "^6.4.17",
     "reflect-metadata": "^0.1.13",
     "type-graphql": "^1.1.1",
+    "typeorm": "^0.2.30",
     "uuid": "^8.3.2"
   },
   "mikro-orm": {

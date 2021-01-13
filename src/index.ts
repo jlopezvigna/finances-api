@@ -1,19 +1,18 @@
-import "reflect-metadata";
-import { MikroORM } from "@mikro-orm/core";
-import { __prod__, COOKIE_NAME } from "./constants";
-import mikroConfig from "./mikro-orm.config";
-import express from "express";
 import { ApolloServer } from "apollo-server-express";
+import connectRedis from "connect-redis";
+import cors from "cors";
+import express from "express";
+import session from "express-session";
+import Redis from "ioredis";
+import "reflect-metadata";
 import { buildSchema } from "type-graphql";
-import { HelloResolver } from "./resolvers/hello";
+import { createConnection } from "typeorm";
+import { COOKIE_NAME, __prod__ } from "./constants";
+import { Bill } from "./entities/Bill";
+import { User } from "./entities/User";
 import { BillResolver } from "./resolvers/bill";
 import { UserResolver } from "./resolvers/user";
-import Redis from "ioredis";
-import session from "express-session";
-import connectRedis from "connect-redis";
 import { MyContext } from "./types";
-import cors from "cors";
-
 declare module "express-session" {
   interface Session {
     userId: number;
@@ -21,10 +20,15 @@ declare module "express-session" {
 }
 
 const main = async () => {
-  const orm = await MikroORM.init(mikroConfig);
-
-  await orm.getMigrator().up();
-
+  const conn = await createConnection({
+    type: "postgres",
+    // username: "root",
+    // password: "root",
+    database: "finances",
+    logging: true,
+    synchronize: true,
+    entities: [User, Bill],
+  });
   const app = express();
 
   const RedisStore = connectRedis(session);
@@ -59,10 +63,10 @@ const main = async () => {
 
   const apolloServer = new ApolloServer({
     schema: await buildSchema({
-      resolvers: [HelloResolver, BillResolver, UserResolver],
+      resolvers: [BillResolver, UserResolver],
       validate: false,
     }),
-    context: ({ req, res }): MyContext => ({ em: orm.em, req, res, redis }),
+    context: ({ req, res }): MyContext => ({ req, res, redis }),
   });
 
   apolloServer.applyMiddleware({

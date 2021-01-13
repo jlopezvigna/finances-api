@@ -10,42 +10,38 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.Bill = void 0;
-const core_1 = require("@mikro-orm/core");
 const type_graphql_1 = require("type-graphql");
-let Bill = class Bill {
-    constructor() {
-        this.createdAt = new Date();
-        this.updatedAt = new Date();
-    }
+const typeorm_1 = require("typeorm");
+let Bill = class Bill extends typeorm_1.BaseEntity {
 };
 __decorate([
     type_graphql_1.Field(),
-    core_1.PrimaryKey(),
+    typeorm_1.PrimaryGeneratedColumn(),
     __metadata("design:type", Number)
 ], Bill.prototype, "id", void 0);
 __decorate([
     type_graphql_1.Field(() => String),
-    core_1.Property({ type: "date" }),
-    __metadata("design:type", Object)
+    typeorm_1.CreateDateColumn(),
+    __metadata("design:type", Date)
 ], Bill.prototype, "createdAt", void 0);
 __decorate([
     type_graphql_1.Field(() => String),
-    core_1.Property({ type: "date", onUpdate: () => new Date() }),
-    __metadata("design:type", Object)
+    typeorm_1.UpdateDateColumn(),
+    __metadata("design:type", Date)
 ], Bill.prototype, "updatedAt", void 0);
 __decorate([
     type_graphql_1.Field(),
-    core_1.Property({ type: "text" }),
+    typeorm_1.Column(),
     __metadata("design:type", String)
 ], Bill.prototype, "title", void 0);
 __decorate([
     type_graphql_1.Field(),
-    core_1.Property(),
+    typeorm_1.Column(),
     __metadata("design:type", Number)
 ], Bill.prototype, "amount", void 0);
 Bill = __decorate([
     type_graphql_1.ObjectType(),
-    core_1.Entity()
+    typeorm_1.Entity()
 ], Bill);
 exports.Bill = Bill;
 //# sourceMappingURL=Bill.js.map

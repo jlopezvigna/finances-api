@@ -1,60 +1,50 @@
+import { Arg, Mutation, Query, Resolver } from "type-graphql";
 import { Bill } from "../entities/Bill";
-import { MyContext } from "src/types";
-import { Resolver, Query, Ctx, Arg, Mutation } from "type-graphql";
 
 @Resolver()
 export class BillResolver {
   @Query(() => [Bill])
-  bills(@Ctx() { em }: MyContext): Promise<Bill[]> {
-    return em.find(Bill, {});
+  bills(): Promise<Bill[]> {
+    return Bill.find();
   }
 
   @Query(() => Bill, { nullable: true })
-  bill(@Arg("id") id: number, @Ctx() { em }: MyContext): Promise<Bill | null> {
-    return em.findOne(Bill, { id });
+  bill(@Arg("id") id: number): Promise<Bill | undefined> {
+    return Bill.findOne(id);
   }
 
   @Mutation(() => Bill)
   async createBill(
     @Arg("title") title: string,
-    @Arg("amount") amount: number,
-    @Ctx()
-    { em }: MyContext
+    @Arg("amount") amount: number
   ): Promise<Bill> {
-    const bill = em.create(Bill, { title, amount });
-    await em.persistAndFlush(bill);
-    return bill;
+    return Bill.create({ title, amount }).save();
   }
 
   @Mutation(() => Bill, { nullable: true })
   async updateBill(
     @Arg("id") id: number,
     @Arg("title") title: string,
-    @Arg("amount") amount: number,
-    @Ctx() { em }: MyContext
-  ): Promise<Bill | null> {
-    const bill = await em.findOne(Bill, { id });
+    @Arg("amount") amount: number
+  ): Promise<Bill | undefined> {
+    const bill = Bill.findOne(id);
     if (!bill) {
-      return null;
+      return undefined;
     }
     if (typeof title !== undefined) {
-      bill.title = title;
+      await Bill.update({ id }, { title });
     }
 
     if (typeof amount !== undefined) {
-      bill.amount = amount;
+      await Bill.update({ id }, { amount });
     }
-    await em.persistAndFlush(bill);
     return bill;
   }
 
   @Mutation(() => Boolean)
-  async deleteBill(
-    @Arg("id") id: number,
-    @Ctx() { em }: MyContext
-  ): Promise<boolean> {
+  async deleteBill(@Arg("id") id: number): Promise<boolean> {
     try {
-      await em.nativeDelete(Bill, { id });
+      await Bill.delete(id);
     } catch {
       return false;
     }
