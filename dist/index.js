@@ -12,13 +12,13 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
+require("reflect-metadata");
 const apollo_server_express_1 = require("apollo-server-express");
 const connect_redis_1 = __importDefault(require("connect-redis"));
 const cors_1 = __importDefault(require("cors"));
 const express_1 = __importDefault(require("express"));
 const express_session_1 = __importDefault(require("express-session"));
 const ioredis_1 = __importDefault(require("ioredis"));
-require("reflect-metadata");
 const type_graphql_1 = require("type-graphql");
 const typeorm_1 = require("typeorm");
 const constants_1 = require("./constants");
@@ -26,13 +26,14 @@ const Bill_1 = require("./entities/Bill");
 const User_1 = require("./entities/User");
 const bill_1 = require("./resolvers/bill");
 const user_1 = require("./resolvers/user");
+const Category_1 = require("./entities/Category");
 const main = () => __awaiter(void 0, void 0, void 0, function* () {
     const conn = yield typeorm_1.createConnection({
         type: "postgres",
         database: "finances",
         logging: true,
         synchronize: true,
-        entities: [User_1.User, Bill_1.Bill],
+        entities: [User_1.User, Bill_1.Bill, Category_1.Category],
     });
     const app = express_1.default();
     const RedisStore = connect_redis_1.default(express_session_1.default);

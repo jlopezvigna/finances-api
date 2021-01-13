@@ -12,6 +12,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.Bill = void 0;
 const type_graphql_1 = require("type-graphql");
 const typeorm_1 = require("typeorm");
+const Category_1 = require("./Category");
 let Bill = class Bill extends typeorm_1.BaseEntity {
 };
 __decorate([
@@ -19,16 +20,6 @@ __decorate([
     typeorm_1.PrimaryGeneratedColumn(),
     __metadata("design:type", Number)
 ], Bill.prototype, "id", void 0);
-__decorate([
-    type_graphql_1.Field(() => String),
-    typeorm_1.CreateDateColumn(),
-    __metadata("design:type", Date)
-], Bill.prototype, "createdAt", void 0);
-__decorate([
-    type_graphql_1.Field(() => String),
-    typeorm_1.UpdateDateColumn(),
-    __metadata("design:type", Date)
-], Bill.prototype, "updatedAt", void 0);
 __decorate([
     type_graphql_1.Field(),
     typeorm_1.Column(),
@@ -39,6 +30,26 @@ __decorate([
     typeorm_1.Column(),
     __metadata("design:type", Number)
 ], Bill.prototype, "amount", void 0);
+__decorate([
+    type_graphql_1.Field(() => String),
+    typeorm_1.Column({ default: new Date() }),
+    __metadata("design:type", Date)
+], Bill.prototype, "period", void 0);
+__decorate([
+    typeorm_1.OneToOne(() => Category_1.Category),
+    typeorm_1.JoinColumn(),
+    __metadata("design:type", Category_1.Category)
+], Bill.prototype, "category", void 0);
+__decorate([
+    type_graphql_1.Field(() => String),
+    typeorm_1.CreateDateColumn(),
+    __metadata("design:type", Date)
+], Bill.prototype, "createdAt", void 0);
+__decorate([
+    type_graphql_1.Field(() => String),
+    typeorm_1.UpdateDateColumn(),
+    __metadata("design:type", Date)
+], Bill.prototype, "updatedAt", void 0);
 Bill = __decorate([
     type_graphql_1.ObjectType(),
     typeorm_1.Entity()

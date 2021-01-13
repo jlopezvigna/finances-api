@@ -1,38 +1,32 @@
 import { Field, ObjectType } from "type-graphql";
 import {
-  Entity,
+  BaseEntity,
   Column,
+  CreateDateColumn,
+  Entity,
+  ManyToOne,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
-  CreateDateColumn,
-  BaseEntity,
-  OneToOne,
-  JoinColumn,
 } from "typeorm";
-import { Category } from "./Category";
+import { User } from "./User";
 
 @ObjectType()
 @Entity()
-export class Bill extends BaseEntity {
+export class Category extends BaseEntity {
   @Field()
   @PrimaryGeneratedColumn()
   id!: number;
 
   @Field()
   @Column()
-  title!: string;
+  name: string;
 
   @Field()
   @Column()
-  amount!: number;
+  userId: number;
 
-  @Field(() => String)
-  @Column({ default: new Date() })
-  period: Date;
-
-  @OneToOne(() => Category)
-  @JoinColumn()
-  category: Category;
+  @ManyToOne(() => User, (user) => user.categories)
+  user: User;
 
   @Field(() => String)
   @CreateDateColumn()
