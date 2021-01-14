@@ -14,6 +14,7 @@ import { BillResolver } from "./resolvers/bill";
 import { UserResolver } from "./resolvers/user";
 import { MyContext } from "./types";
 import { Category } from "./entities/Category";
+import { CategoryResolver } from "./resolvers/category";
 declare module "express-session" {
   interface Session {
     userId: number;
@@ -63,7 +64,7 @@ const main = async () => {
 
   const apolloServer = new ApolloServer({
     schema: await buildSchema({
-      resolvers: [BillResolver, UserResolver],
+      resolvers: [BillResolver, UserResolver, CategoryResolver],
       validate: false,
     }),
     context: ({ req, res }): MyContext => ({ req, res, redis }),

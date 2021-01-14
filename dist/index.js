@@ -27,6 +27,7 @@ const User_1 = require("./entities/User");
 const bill_1 = require("./resolvers/bill");
 const user_1 = require("./resolvers/user");
 const Category_1 = require("./entities/Category");
+const category_1 = require("./resolvers/category");
 const main = () => __awaiter(void 0, void 0, void 0, function* () {
     const conn = yield typeorm_1.createConnection({
         type: "postgres",
@@ -61,7 +62,7 @@ const main = () => __awaiter(void 0, void 0, void 0, function* () {
     }));
     const apolloServer = new apollo_server_express_1.ApolloServer({
         schema: yield type_graphql_1.buildSchema({
-            resolvers: [bill_1.BillResolver, user_1.UserResolver],
+            resolvers: [bill_1.BillResolver, user_1.UserResolver, category_1.CategoryResolver],
             validate: false,
         }),
         context: ({ req, res }) => ({ req, res, redis }),
