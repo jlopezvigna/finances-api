@@ -15,6 +15,7 @@ import { UserResolver } from "./resolvers/user";
 import { MyContext } from "./types";
 import { Category } from "./entities/Category";
 import { CategoryResolver } from "./resolvers/category";
+import path from "path";
 declare module "express-session" {
   interface Session {
     userId: number;
@@ -27,8 +28,11 @@ const main = async () => {
     database: "finances",
     logging: true,
     synchronize: true,
+    migrations: [path.join(__dirname, "./migrations/*")],
     entities: [User, Bill, Category],
   });
+
+  await conn.runMigrations();
 
   const app = express();
 

@@ -5,9 +5,11 @@ import {
   CreateDateColumn,
   Entity,
   ManyToOne,
+  OneToMany,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from "typeorm";
+import { Bill } from "./Bill";
 import { User } from "./User";
 
 @ObjectType()
@@ -27,6 +29,9 @@ export class Category extends BaseEntity {
 
   @ManyToOne(() => User, (user) => user.categories)
   user: User;
+
+  @OneToMany(() => Bill, (bill) => bill.categoryId)
+  bills: Bill[];
 
   @Field(() => String)
   @CreateDateColumn()

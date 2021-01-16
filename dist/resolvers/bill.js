@@ -23,10 +23,18 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.BillResolver = void 0;
 const type_graphql_1 = require("type-graphql");
+const typeorm_1 = require("typeorm");
 const Bill_1 = require("../entities/Bill");
 let BillResolver = class BillResolver {
-    bills() {
-        return Bill_1.Bill.find();
+    bills(limit, offset) {
+        const realLimit = Math.min(50, limit);
+        return typeorm_1.getConnection()
+            .getRepository(Bill_1.Bill)
+            .createQueryBuilder("b")
+            .orderBy("b.id", "DESC")
+            .skip(offset)
+            .take(realLimit)
+            .getMany();
     }
     bill(id) {
         return Bill_1.Bill.findOne(id);
@@ -65,8 +73,10 @@ let BillResolver = class BillResolver {
 };
 __decorate([
     type_graphql_1.Query(() => [Bill_1.Bill]),
+    __param(0, type_graphql_1.Arg("limit", () => type_graphql_1.Int)),
+    __param(1, type_graphql_1.Arg("offset", () => Number, { nullable: true, defaultValue: 0 })),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", []),
+    __metadata("design:paramtypes", [Number, Object]),
     __metadata("design:returntype", Promise)
 ], BillResolver.prototype, "bills", null);
 __decorate([

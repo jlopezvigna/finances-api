@@ -1,4 +1,3 @@
-import { nextTick } from "process";
 import { MyContext } from "src/types";
 import { MiddlewareFn } from "type-graphql";
 

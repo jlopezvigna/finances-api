@@ -1,11 +1,23 @@
-import { Arg, Mutation, Query, Resolver } from "type-graphql";
+import { Arg, Int, Mutation, Query, Resolver } from "type-graphql";
+import { getConnection } from "typeorm";
 import { Bill } from "../entities/Bill";
 
 @Resolver()
 export class BillResolver {
   @Query(() => [Bill])
-  bills(): Promise<Bill[]> {
-    return Bill.find();
+  bills(
+    @Arg("limit", () => Int) limit: number,
+    @Arg("offset", () => Number, { nullable: true, defaultValue: 0 })
+    offset: number | null
+  ): Promise<Bill[]> {
+    const realLimit = Math.min(50, limit);
+    return getConnection()
+      .getRepository(Bill)
+      .createQueryBuilder("b")
+      .orderBy("b.id", "DESC")
+      .skip(offset)
+      .take(realLimit)
+      .getMany();
   }
 
   @Query(() => Bill, { nullable: true })

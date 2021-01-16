@@ -8,6 +8,7 @@ import {
   BaseEntity,
   OneToOne,
   JoinColumn,
+  ManyToOne,
 } from "typeorm";
 import { Category } from "./Category";
 

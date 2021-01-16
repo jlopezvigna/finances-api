@@ -28,14 +28,17 @@ const bill_1 = require("./resolvers/bill");
 const user_1 = require("./resolvers/user");
 const Category_1 = require("./entities/Category");
 const category_1 = require("./resolvers/category");
+const path_1 = __importDefault(require("path"));
 const main = () => __awaiter(void 0, void 0, void 0, function* () {
     const conn = yield typeorm_1.createConnection({
         type: "postgres",
         database: "finances",
         logging: true,
         synchronize: true,
+        migrations: [path_1.default.join(__dirname, "./migrations/*")],
         entities: [User_1.User, Bill_1.Bill, Category_1.Category],
     });
+    yield conn.runMigrations();
     const app = express_1.default();
     const RedisStore = connect_redis_1.default(express_session_1.default);
     const redis = new ioredis_1.default();
